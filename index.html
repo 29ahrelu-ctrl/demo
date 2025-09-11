@@ -1,18 +1,51 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
+        <script src="https://aframe.io/releases/1.0.0/aframe.min.js"></script>
     </head>
-
     <body>
         <a-scene>
-        <!--    
-        <a-ring color="green" radius-inner="1.5" radius-outer="2" position"0 0 -5"></a-ring>
-        -->
-        <!--
-        <a-torus color="#43A367" arc="270" radius="5" radius-tubular="0.1"></a-torus>
-        --> 
-        <a-cone color="green" radius-bottom="2" radius-top="0.5"></a-cone>
+            <a-plane position="0 0 0" rotation="-90 0 0" width="10" height="10" color="#7BC8A4"></a-plane>
+        <a-box
+            position="0 1 -5"
+            depth="2"
+            height="2"
+            width="2"
+            animation="
+                property: position;
+                from: 0 0 0;
+                to: 0 10 0;
+                dur: 6000;
+                easing: linear;
+                loop: true;
+            "
+            color="red">
+        </a-box>
+        <a-sphere
+         position="0 1 -5"
+            depth="2"
+            height="2"
+            width="2"
+            animation="
+                property: position;
+                from: 3 0 0;
+                to: 3 10 0;
+                dur: 5000;
+                easing: linear;
+                loop: true;
+            "
+            color="blue">
+        </a-sphere>
+                    <a-sphere
+            animation="
+            property: position;
+            from: 0 3 -15;
+            to: 0 3 -3;
+            dur:3000;
+            easing: linear;
+            loop:true;
+            "
+            color="black"
         </a-scene>
     </body>
 </html>
