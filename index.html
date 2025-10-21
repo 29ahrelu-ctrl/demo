@@ -1,23 +1,229 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <script src="https://aframe.io/releases/1.0.0/aframe.min.js"></script>
-        <script src="https://cdn.rawgit.com/donmccurdy/aframe-physics-system/v4.0.1/dist/aframe-physics-system.min.js"></script>
-    
-    </head>
-    <body>
-        <a-scene physics="gravity:-4.8">   
-<a-plane static-body position="0 0 -6" rotation="-90 0 0" width="10" height="10" color="tan"></a-plane>
-<a-cylinder dynamic-body position="3 1 -2" radius="0.5" height="0.8" color="green"></a-cylinder>
-<a-box dynamic-body position="3 0.5 -2" depth="0.2" height="0.6" width="0.2" color="green"></a-box>
-<a-box dynamic-body position="-2 0.5 -2" depth="0.5" height="0.5" width="0.5" color="blue"rotation="0 0 -45"></a-box>
-<a-box dynamic-body position="-1 0.5 -2" depth="0.2" height="1" width="0.5" color="black"rotation="0 90 0"></a-box>
-<a-box dynamic-body position="-0.4 0.5 -2" depth="0.2" height="1" width="0.5" color="black"rotation="0 90 0"></a-box>
-<a-box dynamic-body position="0.2 0.5 -2" depth="0.2" height="1" width="0.5" color="black"rotation="0 90 0"></a-box>
-<a-box dynamic-body position="0.8 0.5 -2" depth="0.2" height="1" width="0.5" color="black"rotation="0 90 0"></a-box>
-<a-box dynamic-body position="1.4 0.5 -2" depth="0.2" height="1" width="0.5" color="black"rotation="0 90 0"></a-box>
-<a-box dynamic-body position="2 0.9 -2" depth="0.2" height="1.5" width="0.5" color="black"rotation="0 90 0"></a-box>
-<a-sphere dynamic-body src="imageurl.jpg" radius="0.4" position="-1.5 3 -2"></a-sphere>
-        </a-scene>
-    </body>
+<head>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <title>Jungle Treasure Hunt</title>
+</head>
+<body>
+    <a-scene background="color: #2F4F2F">
+        <!-- Score display -->
+        <a-text id="score" position="-3 3 -5" value="Gold Coins: 0/8" color="yellow" 
+                font="kelsonsans" width="8"></a-text>
+        
+        <!-- Lives display -->
+        <a-text id="lives" position="1 3 -5" value="Lives: 3" color="red" 
+                font="kelsonsans" width="8"></a-text>
+        
+        <!-- Win message -->
+        <a-text id="winMessage" position="0 2 -5" value="🏆 TREASURE MASTER! All coins found! 🏆" 
+                color="gold" font="kelsonsans" width="10" visible="false"></a-text>
+        
+        <!-- Game Over message -->
+        <a-text id="gameOverMessage" position="0 2 -5" value="💀 GAME OVER! Animals caught you! 💀" 
+                color="red" font="kelsonsans" width="10" visible="false"></a-text>
+        
+        <!-- Camera with cursor -->
+        <a-camera id="player" wasd-controls look-controls position="0 1.6 0">
+            <a-cursor color="white" raycaster="objects: .treasure"></a-cursor>
+        </a-camera>
+        
+        <!-- Ground (jungle floor) -->
+        <a-plane position="0 0 0" rotation="-90 0 0" width="25" height="25" color="#228B22"></a-plane>
+        
+        <!-- Gold Coins (flatter cylinders to look like coins) -->
+        <a-cylinder class="treasure" position="4 0.1 -3" radius="0.4" height="0.1" color="gold" 
+                    animation="property: rotation; to: 0 360 0; loop: true; dur: 2000">
+        </a-cylinder>
+        
+        <a-cylinder class="treasure" position="-5 0.1 -6" radius="0.4" height="0.1" color="gold"
+                    animation="property: rotation; to: 0 360 0; loop: true; dur: 2000">
+        </a-cylinder>
+        
+        <a-cylinder class="treasure" position="7 0.1 -9" radius="0.4" height="0.1" color="gold"
+                    animation="property: rotation; to: 0 360 0; loop: true; dur: 2000">
+        </a-cylinder>
+        
+        <a-cylinder class="treasure" position="-3 0.1 -2" radius="0.4" height="0.1" color="gold"
+                    animation="property: rotation; to: 0 360 0; loop: true; dur: 2000">
+        </a-cylinder>
+        
+        <a-cylinder class="treasure" position="2 0.1 -8" radius="0.4" height="0.1" color="gold"
+                    animation="property: rotation; to: 0 360 0; loop: true; dur: 2000">
+        </a-cylinder>
+        
+        <a-cylinder class="treasure" position="-7 0.1 -4" radius="0.4" height="0.1" color="gold"
+                    animation="property: rotation; to: 0 360 0; loop: true; dur: 2000">
+        </a-cylinder>
+        
+        <a-cylinder class="treasure" position="5 0.1 -12" radius="0.4" height="0.1" color="gold"
+                    animation="property: rotation; to: 0 360 0; loop: true; dur: 2000">
+        </a-cylinder>
+        
+        <a-cylinder class="treasure" position="-2 0.1 -10" radius="0.4" height="0.1" color="gold"
+                    animation="property: rotation; to: 0 360 0; loop: true; dur: 2000">
+        </a-cylinder>
+        
+        <!-- Jungle Animals (dangerous!) -->
+        <!-- Tiger -->
+        <a-box class="animal" id="tiger" position="12 0.5 -5" width="1.5" height="1" depth="0.8" 
+               color="#FF8C00" material="color: #FF8C00">
+            <a-text position="0 0.7 0" value="🐅" align="center" width="20"></a-text>
+        </a-box>
+        
+        <!-- Snake -->
+        <a-cylinder class="animal" id="snake" position="-12 0.2 -8" radius="0.3" height="2" 
+                    color="#228B22" rotation="90 0 0">
+            <a-text position="0 0 1.2" value="🐍" align="center" width="15"></a-text>
+        </a-cylinder>
+        
+        <!-- Crocodile -->
+        <a-box class="animal" id="crocodile" position="8 0.3 -15" width="2" height="0.6" depth="1" 
+               color="#556B2F">
+            <a-text position="0 0.5 0" value="🐊" align="center" width="18"></a-text>
+        </a-box>
+        
+        <!-- Jungle Bushes (green spheres of different sizes) -->
+        <a-sphere position="6 1 -4" radius="1.2" color="#006400"></a-sphere>
+        <a-sphere position="-8 0.8 -7" radius="1" color="#228B22"></a-sphere>
+        <a-sphere position="3 1.5 -11" radius="1.5" color="#006400"></a-sphere>
+        <a-sphere position="-4 0.9 -8" radius="1.1" color="#228B22"></a-sphere>
+        <a-sphere position="8 1.3 -6" radius="1.3" color="#006400"></a-sphere>
+        <a-sphere position="-6 1 -3" radius="1" color="#228B22"></a-sphere>
+        <a-sphere position="1 0.7 -5" radius="0.8" color="#006400"></a-sphere>
+        <a-sphere position="-1 1.4 -12" radius="1.4" color="#228B22"></a-sphere>
+        <a-sphere position="9 1 -10" radius="1.1" color="#006400"></a-sphere>
+        <a-sphere position="-9 1.2 -5" radius="1.2" color="#228B22"></a-sphere>
+        
+        <!-- Some trees (tall cylinders with sphere tops) -->
+        <a-cylinder position="10 3 -8" radius="0.3" height="6" color="#8B4513"></a-cylinder>
+        <a-sphere position="10 6 -8" radius="2" color="#228B22"></a-sphere>
+        
+        <a-cylinder position="-10 3 -10" radius="0.3" height="6" color="#8B4513"></a-cylinder>
+        <a-sphere position="-10 6 -10" radius="2" color="#006400"></a-sphere>
+        
+        <a-cylinder position="8 2.5 -15" radius="0.3" height="5" color="#8B4513"></a-cylinder>
+        <a-sphere position="8 5 -15" radius="1.8" color="#228B22"></a-sphere>
+    </a-scene>
+
+    <script>
+        // Game variables
+        let goldFound = 0;
+        const totalGold = 8;
+        let lives = 3;
+        let gameOver = false;
+        
+        // Get elements
+        const treasures = document.querySelectorAll('.treasure');
+        const animals = document.querySelectorAll('.animal');
+        const player = document.querySelector('#player');
+        const scoreText = document.querySelector('#score');
+        const livesText = document.querySelector('#lives');
+        const winMessage = document.querySelector('#winMessage');
+        const gameOverMessage = document.querySelector('#gameOverMessage');
+        
+        // Add click listeners to each treasure
+        treasures.forEach(treasure => {
+            treasure.addEventListener('click', function() {
+                if (gameOver) return;
+                
+                // Make treasure disappear with animation
+                this.setAttribute('animation', 'property: scale; to: 0 0 0; dur: 300');
+                
+                setTimeout(() => {
+                    this.setAttribute('visible', 'false');
+                }, 300);
+                
+                // Update score
+                goldFound++;
+                scoreText.setAttribute('value', `Gold Coins: ${goldFound}/${totalGold}`);
+                
+                // Check if player won
+                if (goldFound === totalGold) {
+                    winMessage.setAttribute('visible', 'true');
+                    gameOver = true;
+                }
+            });
+        });
+        
+        // AI Animal Behavior - Chase the player!
+        function moveAnimals() {
+            if (gameOver) return;
+            
+            const playerPos = player.getAttribute('position');
+            
+            animals.forEach((animal, index) => {
+                const animalPos = animal.getAttribute('position');
+                
+                // Calculate direction to player
+                const dx = playerPos.x - animalPos.x;
+                const dz = playerPos.z - animalPos.z;
+                const distance = Math.sqrt(dx * dx + dz * dz);
+                
+                // Different speeds for different animals
+                const speeds = [0.02, 0.015, 0.025]; // tiger, snake, crocodile
+                const speed = speeds[index] || 0.02;
+                
+                // Move towards player (AI chase behavior)
+                if (distance > 0.5) {
+                    const moveX = (dx / distance) * speed;
+                    const moveZ = (dz / distance) * speed;
+                    
+                    animal.setAttribute('position', {
+                        x: animalPos.x + moveX,
+                        y: animalPos.y,
+                        z: animalPos.z + moveZ
+                    });
+                }
+                
+                // Check if animal caught player
+                if (distance < 1.5) {
+                    lives--;
+                    livesText.setAttribute('value', `Lives: ${lives}`);
+                    
+                    // Move animal away after catching player
+                    animal.setAttribute('position', {
+                        x: animalPos.x + (Math.random() - 0.5) * 10,
+                        y: animalPos.y,
+                        z: animalPos.z + (Math.random() - 0.5) * 10
+                    });
+                    
+                    // Check game over
+                    if (lives <= 0) {
+                        gameOver = true;
+                        gameOverMessage.setAttribute('visible', 'true');
+                    }
+                }
+            });
+        }
+        
+        // Start animal AI (runs every 50ms for smooth movement)
+        setInterval(moveAnimals, 50);
+        
+        // Spawn new animals occasionally (every 15 seconds)
+        setInterval(() => {
+            if (gameOver) return;
+            
+            // Add temporary animals that disappear after 10 seconds
+            const tempAnimal = document.createElement('a-sphere');
+            tempAnimal.setAttribute('class', 'animal temp-animal');
+            tempAnimal.setAttribute('position', {
+                x: (Math.random() - 0.5) * 20,
+                y: 0.5,
+                z: (Math.random() - 0.5) * 20 - 5
+            });
+            tempAnimal.setAttribute('radius', '0.6');
+            tempAnimal.setAttribute('color', '#8B0000');
+            tempAnimal.innerHTML = '<a-text position="0 0.8 0" value="🦁" align="center" width="15"></a-text>';
+            
+            document.querySelector('a-scene').appendChild(tempAnimal);
+            
+            // Remove after 10 seconds
+            setTimeout(() => {
+                if (tempAnimal.parentNode) {
+                    tempAnimal.parentNode.removeChild(tempAnimal);
+                }
+            }, 10000);
+        }, 15000);
+    </script>
+</body>
 </html>
