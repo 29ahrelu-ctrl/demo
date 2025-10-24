@@ -22,9 +22,27 @@
         <a-text id="gameOverMessage" position="0 2 -5" value="💀 GAME OVER! Animals caught you! 💀" 
                 color="red" font="kelsonsans" width="10" visible="false"></a-text>
         
+        <!-- Introduction Screen -->
+        <a-entity id="introScreen">
+            <a-plane position="0 2 -4" width="10" height="7" color="#2F4F2F" opacity="0.9"></a-plane>
+            <a-text position="0 4 -3.9" value="🌴 JUNGLE TREASURE HUNT 🌴" 
+                    color="gold" font="kelsonsans" width="8" align="center"></a-text>
+            <a-text position="0 2.8 -3.9" 
+                    value="MISSION: Find all 8 spinning gold coins!&#10;&#10;DANGER: Avoid the jungle animals&#10;🐅 Tiger  🐍 Snake  🐊 Crocodile&#10;&#10;CONTROLS:&#10;• Walk with WASD keys&#10;• Look around with mouse&#10;• Click coins to collect them&#10;&#10;You have 3 lives - don't let animals catch you!" 
+                    color="white" font="kelsonsans" width="6" align="center"></a-text>
+            
+            <!-- Improved clickable start button -->
+            <a-box id="startButton" position="0 0.5 -3.8" width="6" height="1" depth="0.1" 
+                   color="#FFD700" opacity="0.8"
+                   animation="property: scale; to: 1.05 1.05 1.05; dir: alternate; loop: true; dur: 1000">
+                <a-text position="0 0 0.1" value="🎮 CLICK TO START ADVENTURE 🎮" 
+                        color="black" font="kelsonsans" width="8" align="center"></a-text>
+            </a-box>
+        </a-entity>
+        
         <!-- Camera with cursor -->
         <a-camera id="player" wasd-controls look-controls position="0 1.6 0">
-            <a-cursor color="white" raycaster="objects: .treasure"></a-cursor>
+            <a-cursor color="white" raycaster="objects: .treasure, #startButton"></a-cursor>
         </a-camera>
         
         <!-- Ground (jungle floor) -->
@@ -32,53 +50,53 @@
         
         <!-- Gold Coins (flatter cylinders to look like coins) -->
         <a-cylinder class="treasure" position="4 0.1 -3" radius="0.4" height="0.1" color="gold" 
-                    animation="property: rotation; to: 0 360 0; loop: true; dur: 2000">
+                    animation="property: rotation; to: 0 360 0; loop: true; dur: 2000" visible="false">
         </a-cylinder>
         
         <a-cylinder class="treasure" position="-5 0.1 -6" radius="0.4" height="0.1" color="gold"
-                    animation="property: rotation; to: 0 360 0; loop: true; dur: 2000">
+                    animation="property: rotation; to: 0 360 0; loop: true; dur: 2000" visible="false">
         </a-cylinder>
         
         <a-cylinder class="treasure" position="7 0.1 -9" radius="0.4" height="0.1" color="gold"
-                    animation="property: rotation; to: 0 360 0; loop: true; dur: 2000">
+                    animation="property: rotation; to: 0 360 0; loop: true; dur: 2000" visible="false">
         </a-cylinder>
         
         <a-cylinder class="treasure" position="-3 0.1 -2" radius="0.4" height="0.1" color="gold"
-                    animation="property: rotation; to: 0 360 0; loop: true; dur: 2000">
+                    animation="property: rotation; to: 0 360 0; loop: true; dur: 2000" visible="false">
         </a-cylinder>
         
         <a-cylinder class="treasure" position="2 0.1 -8" radius="0.4" height="0.1" color="gold"
-                    animation="property: rotation; to: 0 360 0; loop: true; dur: 2000">
+                    animation="property: rotation; to: 0 360 0; loop: true; dur: 2000" visible="false">
         </a-cylinder>
         
         <a-cylinder class="treasure" position="-7 0.1 -4" radius="0.4" height="0.1" color="gold"
-                    animation="property: rotation; to: 0 360 0; loop: true; dur: 2000">
+                    animation="property: rotation; to: 0 360 0; loop: true; dur: 2000" visible="false">
         </a-cylinder>
         
         <a-cylinder class="treasure" position="5 0.1 -12" radius="0.4" height="0.1" color="gold"
-                    animation="property: rotation; to: 0 360 0; loop: true; dur: 2000">
+                    animation="property: rotation; to: 0 360 0; loop: true; dur: 2000" visible="false">
         </a-cylinder>
         
         <a-cylinder class="treasure" position="-2 0.1 -10" radius="0.4" height="0.1" color="gold"
-                    animation="property: rotation; to: 0 360 0; loop: true; dur: 2000">
+                    animation="property: rotation; to: 0 360 0; loop: true; dur: 2000" visible="false">
         </a-cylinder>
         
         <!-- Jungle Animals (dangerous!) -->
         <!-- Tiger -->
         <a-box class="animal" id="tiger" position="12 0.5 -5" width="1.5" height="1" depth="0.8" 
-               color="#FF8C00" material="color: #FF8C00">
+               color="#FF8C00" material="color: #FF8C00" visible="false">
             <a-text position="0 0.7 0" value="🐅" align="center" width="20"></a-text>
         </a-box>
         
         <!-- Snake -->
         <a-cylinder class="animal" id="snake" position="-12 0.2 -8" radius="0.3" height="2" 
-                    color="#228B22" rotation="90 0 0">
+                    color="#228B22" rotation="90 0 0" visible="false">
             <a-text position="0 0 1.2" value="🐍" align="center" width="15"></a-text>
         </a-cylinder>
         
         <!-- Crocodile -->
         <a-box class="animal" id="crocodile" position="8 0.3 -15" width="2" height="0.6" depth="1" 
-               color="#556B2F">
+               color="#556B2F" visible="false">
             <a-text position="0 0.5 0" value="🐊" align="center" width="18"></a-text>
         </a-box>
         
@@ -106,6 +124,11 @@
     </a-scene>
 
     <script>
+        // Game introduction variables
+        let gameStarted = false;
+        const introScreen = document.querySelector('#introScreen');
+        const startButton = document.querySelector('#startButton');
+        
         // Game variables
         let goldFound = 0;
         const totalGold = 8;
@@ -121,10 +144,20 @@
         const winMessage = document.querySelector('#winMessage');
         const gameOverMessage = document.querySelector('#gameOverMessage');
         
+        // Start game when start button is clicked
+        startButton.addEventListener('click', function() {
+            gameStarted = true;
+            introScreen.setAttribute('visible', 'false');
+            
+            // Show all game elements
+            treasures.forEach(treasure => treasure.setAttribute('visible', 'true'));
+            animals.forEach(animal => animal.setAttribute('visible', 'true'));
+        });
+        
         // Add click listeners to each treasure
         treasures.forEach(treasure => {
             treasure.addEventListener('click', function() {
-                if (gameOver) return;
+                if (gameOver || !gameStarted) return;
                 
                 // Make treasure disappear with animation
                 this.setAttribute('animation', 'property: scale; to: 0 0 0; dur: 300');
@@ -147,7 +180,7 @@
         
         // AI Animal Behavior - Chase the player!
         function moveAnimals() {
-            if (gameOver) return;
+            if (gameOver || !gameStarted) return;
             
             const playerPos = player.getAttribute('position');
             
@@ -201,7 +234,7 @@
         
         // Spawn new animals occasionally (every 15 seconds)
         setInterval(() => {
-            if (gameOver) return;
+            if (gameOver || !gameStarted) return;
             
             // Add temporary animals that disappear after 10 seconds
             const tempAnimal = document.createElement('a-sphere');
@@ -227,3 +260,4 @@
     </script>
 </body>
 </html>
+
